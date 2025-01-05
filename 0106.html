@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHIR Exercise Prescription</title>
+    <script>
+        // 發送 POST 請求來創建運動處方
+        function createCarePlan() {
+            const careplanData = {
+                "resourceType": "CarePlan",
+                "id": "exercise-prescription-123",
+                "status": "active",
+                "intent": "plan",
+                "description": "Daily walking exercise plan for 30 minutes.",
+                "subject": {
+                    "reference": "Patient/123"
+                },
+                "author": {
+                    "reference": "Practitioner/456"
+                },
+                "activity": [
+                    {
+                        "detail": {
+                            "kind": "Appointment",
+                            "description": "Walk 30 minutes daily",
+                            "status": "scheduled"
+                        }
+                    }
+                ]
+            };
+
+            fetch('http://127.0.0.1:5000/careplan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(careplanData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.getElementById('response').innerHTML = `Success: ${data.message}, ID: ${data.id}`;
+                } else {
+                    document.getElementById('response').innerHTML = `Error: ${data.error}`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('response').innerHTML = `Request failed: ${error}`;
+            });
+        }
+
+        // 發送 GET 請求來檢索運動處方
+        function getCarePlan() {
+            const careplanId = document.getElementById('careplanId').value;
+
+            fetch(`http://127.0.0.1:5000/careplan/${careplanId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('response').innerHTML = `Error: ${data.error}`;
+                } else {
+                    document.getElementById('response').innerHTML = `CarePlan: ${JSON.stringify(data, null, 2)}`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('response').innerHTML = `Request failed: ${error}`;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>FHIR Exercise Prescription</h1>
+
+    <h2>Create CarePlan</h2>
+    <button onclick="createCarePlan()">Create CarePlan</button>
+
+    <h2>Get CarePlan</h2>
+    <input type="text" id="careplanId" placeholder="Enter CarePlan ID">
+    <button onclick="getCarePlan()">Get CarePlan</button>
+
+    <h3>Response:</h3>
+    <pre id="response"></pre>
+</body>
+</html>
