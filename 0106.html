@@ -3,88 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FHIR Exercise Prescription</title>
-    <script>
-        // 發送 POST 請求來創建運動處方
-        function createCarePlan() {
-            const careplanData = {
-                "resourceType": "CarePlan",
-                "id": "exercise-prescription-123",
-                "status": "active",
-                "intent": "plan",
-                "description": "Daily walking exercise plan for 30 minutes.",
-                "subject": {
-                    "reference": "Patient/123"
-                },
-                "author": {
-                    "reference": "Practitioner/456"
-                },
-                "activity": [
-                    {
-                        "detail": {
-                            "kind": "Appointment",
-                            "description": "Walk 30 minutes daily",
-                            "status": "scheduled"
-                        }
-                    }
-                ]
-            };
-
-            fetch('http://127.0.0.1:5000/careplan', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(careplanData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    document.getElementById('response').innerHTML = `Success: ${data.message}, ID: ${data.id}`;
-                } else {
-                    document.getElementById('response').innerHTML = `Error: ${data.error}`;
-                }
-            })
-            .catch(error => {
-                document.getElementById('response').innerHTML = `Request failed: ${error}`;
-            });
+    <title>Health Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
-
-        // 發送 GET 請求來檢索運動處方
-        function getCarePlan() {
-            const careplanId = document.getElementById('careplanId').value;
-
-            fetch(`http://127.0.0.1:5000/careplan/${careplanId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    document.getElementById('response').innerHTML = `Error: ${data.error}`;
-                } else {
-                    document.getElementById('response').innerHTML = `CarePlan: ${JSON.stringify(data, null, 2)}`;
-                }
-            })
-            .catch(error => {
-                document.getElementById('response').innerHTML = `Request failed: ${error}`;
-            });
+        label {
+            display: block;
+            margin-bottom: 5px;
         }
-    </script>
+        input, textarea, select {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 8px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>FHIR Exercise Prescription</h1>
+    <h1>Health Management System</h1>
 
-    <h2>Create CarePlan</h2>
-    <button onclick="createCarePlan()">Create CarePlan</button>
+    <section>
+        <h2>Patient Information</h2>
+        <label for="patient-name">Name</label>
+        <input type="text" id="patient-name" placeholder="Enter patient name">
 
-    <h2>Get CarePlan</h2>
-    <input type="text" id="careplanId" placeholder="Enter CarePlan ID">
-    <button onclick="getCarePlan()">Get CarePlan</button>
+        <label for="patient-gender">Gender</label>
+        <select id="patient-gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
 
-    <h3>Response:</h3>
-    <pre id="response"></pre>
+        <label for="patient-dob">Date of Birth</label>
+        <input type="date" id="patient-dob">
+    </section>
+
+    <section>
+        <h2>Practitioner Information</h2>
+        <label for="practitioner-name">Name</label>
+        <input type="text" id="practitioner-name" placeholder="Enter practitioner name">
+
+        <label for="practitioner-qualification">Qualification</label>
+        <input type="text" id="practitioner-qualification" placeholder="Enter qualification">
+    </section>
+
+    <section>
+        <h2>Care Plan</h2>
+        <label for="careplan-goals">Goals</label>
+        <textarea id="careplan-goals" placeholder="Enter care plan goals"></textarea>
+
+        <label for="careplan-activities">Activities</label>
+        <textarea id="careplan-activities" placeholder="Enter care plan activities"></textarea>
+    </section>
+
+    <section>
+        <h2>Observation</h2>
+        <label for="observation-steps">Steps Count</label>
+        <input type="number" id="observation-steps" placeholder="Enter steps count">
+
+        <label for="observation-heart-rate">Heart Rate</label>
+        <input type="number" id="observation-heart-rate" placeholder="Enter heart rate">
+    </section>
+
+    <section>
+        <h2>Goal Setting</h2>
+        <label for="goal-short-term">Short-term Goal</label>
+        <textarea id="goal-short-term" placeholder="Enter short-term goal"></textarea>
+
+        <label for="goal-long-term">Long-term Goal</label>
+        <textarea id="goal-long-term" placeholder="Enter long-term goal"></textarea>
+    </section>
+
+    <button onclick="submitForm()">Submit</button>
+
+    <script>
+        function submitForm() {
+            const patient = {
+                name: document.getElementById('patient-name').value,
+                gender: document.getElementById('patient-gender').value,
+                dob: document.getElementById('patient-dob').value
+            };
+            const practitioner = {
+                name: document.getElementById('practitioner-name').value,
+                qualification: document.getElementById('practitioner-qualification').value
+            };
+            const carePlan = {
+                goals: document.getElementById('careplan-goals').value,
+                activities: document.getElementById('careplan-activities').value
+            };
+            const observation = {
+                steps: document.getElementById('observation-steps').value,
+                heartRate: document.getElementById('observation-heart-rate').value
+            };
+            const goal = {
+                shortTerm: document.getElementById('goal-short-term').value,
+                longTerm: document.getElementById('goal-long-term').value
+            };
+
+            console.log('Patient Information:', patient);
+            console.log('Practitioner Information:', practitioner);
+            console.log('Care Plan:', carePlan);
+            console.log('Observation:', observation);
+            console.log('Goals:', goal);
+            alert('Data submitted successfully! Check console for details.');
+        }
+    </script>
 </body>
 </html>
