@@ -1,123 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Management System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input, textarea, select {
-            width: 100%;
-            margin-bottom: 15px;
-            padding: 8px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>AI 影像分析結果</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    h2 { color: #2c3e50; }
+    #result { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+    img { max-width: 300px; display: block; margin-top: 10px; }
+  </style>
 </head>
 <body>
-    <h1>Health Management System</h1>
+  <h2>AI 影像分析系統</h2>
 
-    <section>
-        <h2>Patient Information</h2>
-        <label for="patient-name">Name</label>
-        <input type="text" id="patient-name" placeholder="Enter patient name">
+  <label for="imageUpload">上傳胸腔X光影像：</label>
+  <input type="file" id="imageUpload" accept="image/*"><br>
 
-        <label for="patient-gender">Gender</label>
-        <select id="patient-gender">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-        </select>
+  <div id="previewContainer"></div>
+  <button onclick="analyzeImage()">分析影像</button>
 
-        <label for="patient-dob">Date of Birth</label>
-        <input type="date" id="patient-dob">
-    </section>
+  <div id="result"></div>
 
-    <section>
-        <h2>Practitioner Information</h2>
-        <label for="practitioner-name">Name</label>
-        <input type="text" id="practitioner-name" placeholder="Enter practitioner name">
+  <script>
+    function analyzeImage() {
+      const fileInput = document.getElementById('imageUpload');
+      const resultDiv = document.getElementById('result');
+      const previewContainer = document.getElementById('previewContainer');
 
-        <label for="practitioner-qualification">Qualification</label>
-        <input type="text" id="practitioner-qualification" placeholder="Enter qualification">
-    </section>
+      if (fileInput.files.length === 0) {
+        alert("請先選擇影像檔案！");
+        return;
+      }
 
-    <section>
-        <h2>Care Plan</h2>
-        <label for="careplan-goals">Goals</label>
-        <textarea id="careplan-goals" placeholder="Enter care plan goals"></textarea>
+      const file = fileInput.files[0];
+      const reader = new FileReader();
 
-        <label for="careplan-activities">Activities</label>
-        <textarea id="careplan-activities" placeholder="Enter care plan activities"></textarea>
-    </section>
+      reader.onload = function(e) {
+        previewContainer.innerHTML = `<img src="${e.target.result}" alt="上傳影像預覽">`;
 
-    <section>
-        <h2>Observation</h2>
-        <label for="observation-steps">Steps Count</label>
-        <input type="number" id="observation-steps" placeholder="Enter steps count">
+        // 模擬 AI 分析結果（實際可改用 fetch 送到後端分析）
+        const aiResult = {
+          finding: "肺炎跡象",
+          confidence: "91%"
+        };
 
-        <label for="observation-heart-rate">Heart Rate</label>
-        <input type="number" id="observation-heart-rate" placeholder="Enter heart rate">
-    </section>
+        resultDiv.innerHTML = `
+          <h3>AI 分析結果：</h3>
+          <p><strong>發現：</strong> ${aiResult.finding}</p>
+          <p><strong>信心指數：</strong> ${aiResult.confidence}</p>
+        `;
+      };
 
-    <section>
-        <h2>Goal Setting</h2>
-        <label for="goal-short-term">Short-term Goal</label>
-        <textarea id="goal-short-term" placeholder="Enter short-term goal"></textarea>
-
-        <label for="goal-long-term">Long-term Goal</label>
-        <textarea id="goal-long-term" placeholder="Enter long-term goal"></textarea>
-    </section>
-
-    <button onclick="submitForm()">Submit</button>
-
-    <script>
-        function submitForm() {
-            const patient = {
-                name: document.getElementById('patient-name').value,
-                gender: document.getElementById('patient-gender').value,
-                dob: document.getElementById('patient-dob').value
-            };
-            const practitioner = {
-                name: document.getElementById('practitioner-name').value,
-                qualification: document.getElementById('practitioner-qualification').value
-            };
-            const carePlan = {
-                goals: document.getElementById('careplan-goals').value,
-                activities: document.getElementById('careplan-activities').value
-            };
-            const observation = {
-                steps: document.getElementById('observation-steps').value,
-                heartRate: document.getElementById('observation-heart-rate').value
-            };
-            const goal = {
-                shortTerm: document.getElementById('goal-short-term').value,
-                longTerm: document.getElementById('goal-long-term').value
-            };
-
-            console.log('Patient Information:', patient);
-            console.log('Practitioner Information:', practitioner);
-            console.log('Care Plan:', carePlan);
-            console.log('Observation:', observation);
-            console.log('Goals:', goal);
-            alert('Data submitted successfully! Check console for details.');
-        }
-    </script>
+      reader.readAsDataURL(file);
+    }
+  </script>
 </body>
 </html>
